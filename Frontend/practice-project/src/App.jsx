@@ -10,7 +10,7 @@ function App() {
   const [refresh, setRefresh] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5174/api/todo")
+    axios.get("http://localhost:8000/api/todo")
       .then((res) => {
         console.log(res, "Response")
         setTodoData(res.data.data)
@@ -26,9 +26,13 @@ function App() {
       todo: inputValue,
     }
 
-    axios.post("http://localhost:5174/api/todo", objToSend)
+    axios.post("http://localhost:8000/api/todo", objToSend)
       .then((res) => {
-        setRefresh(!refresh)
+        if (res.data.status) {
+          setRefresh(!refresh)
+        } else {
+          alert(res.data.message)
+        }
         console.log(res, "response")
       })
       .catch((err) => {
@@ -39,6 +43,41 @@ function App() {
     // console.log(objToSend)
   }
 
+  const deleteTodo = (uID) => {
+    // console.log(uID)
+    axios.delete(`http://localhost:8000/api/todo/${uID}`)
+      .then((res) => {
+        if (res.data.status) {
+          setRefresh(!refresh)
+          console.log(res.data.message, true)
+        } else {
+          alert(res.data.message)
+        }
+      })
+      .catch((err) => {
+        console.log(err, "error")
+      })
+  }
+
+  const editTodo = (uID) => {
+    // console.log(uID);
+    const newVal = prompt("Add Updated TODO");
+    // console.log(uID, newVal)
+    const objToSend = {
+      todo: newVal,
+      id: uID
+    };
+    axios.put("http://localhost:8000/api/todo", objToSend)
+      .then((res) => {
+        if (res.data.status) {
+          setRefresh(!refresh);
+          console.log(res.data, "updated")
+          return
+        }
+      }).catch((err) => {
+        console.log(err, "error")
+      })
+  }
 
   return (
     <>
@@ -49,7 +88,7 @@ function App() {
 
         {todoData.length > 0 ?
           todoData.map((e) =>
-            <li key={e._key}>{e.todo} <button>Edit</button><button>Delete</button></li>)
+            <li key={e._id}>{e.todo} <button onClick={() => editTodo(e._id)}>Edit</button><button onClick={() => deleteTodo(e._id)}>Delete</button></li>)
           : <h1>NO TODOS BUDDY</h1>
         }
 

@@ -9,7 +9,7 @@ const port = process.env.PORT || 4000;
 app.use(cors()) // ALLOW CROSS_ORIGIN
 app.use(express.json()) // ALLOW REQUEST BODY PARSER
 
-const mongoDbUri = "mongodb+srv://arsalansohail1934:TFLYG9v1yoEpKcDg@cluster0.jjptwpd.mongodb.net/";
+const mongoDbUri = "";
 
 mongoose.connect(mongoDbUri)
     .then((res) => console.log("DB Connect Successfully"))
@@ -94,11 +94,68 @@ app.get("/api/todo", (request, response) => {
             message: "Internal server error: " + err,
             status: false
         }))
-
 })
 
+app.delete("/api/todo/:id", (request, response) => {
+    const { id } = request.params;
+
+    // =================== DEPRICATED ===================
+
+    // TodoModel.findByIdAndDelete(id, (error, data) => {
+    //     if (error) {
+    //         response.json({
+    //             message: `INTERNAL SERVER ERROR ${error}`,
+    //             status: false
+    //         })
+    //     } else {
+    //         response.json({
+    //             message: "Successfully Delete",
+    //             status: true
+    //         })
+    //     }
+    // })
+
+    TodoModel.findByIdAndDelete(id)
+        .then(data => response.json({
+            message: "Successfully Delete",
+            status: true
+        }))
+        .catch(err => response.json({
+            message: "Internal server error: " + err,
+            status: false
+        }))
+    console.log(id)
+})
+
+app.put("/api/todo", (request, response) => {
+    const body = request.body;
+    console.log(body, "Body");
+
+    if (!body.todo) {
+        response.json({
+            message: "REQUIRED FIELDS ARE MISSING",
+            status: false,
+        });
+    }
+
+    const objToSend = {
+        todo: body.todo
+    };
+
+    TodoModel.findByIdAndUpdate(body.id, objToSend)
+        .then(data => response.json({
+            message: "Successfully Edit",
+            status: true,
+            data
+        }))
+        .catch(err => response.json({
+            message: "Internal server error: " + err,
+            status: false
+        }))
+
+})
 
 app.listen(port, () => console.log(`server running on port ${port}`))
 
 // MONGODB
-// arsalansohail1934 TFLYG9v1yoEpKcDg
+//
