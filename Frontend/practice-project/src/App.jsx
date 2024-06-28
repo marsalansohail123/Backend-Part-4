@@ -1,5 +1,6 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
+import { BASE_URL } from "./config";
 
 function App() {
 
@@ -26,7 +27,7 @@ function App() {
       todo: inputValue,
     }
 
-    axios.post("http://localhost:8000/api/todo", objToSend)
+    axios.post(`${BASE_URL}todo`, objToSend)
       .then((res) => {
         if (res.data.status) {
           setRefresh(!refresh)

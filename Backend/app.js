@@ -4,10 +4,14 @@ require("dotenv").config();
 const cors = require("cors")
 const mongoose = require("mongoose");
 const TodoModel = require("./model/todoSchema");
+const router = require("./routes");
 const port = process.env.PORT || 4000;
 
 app.use(cors()) // ALLOW CROSS_ORIGIN
 app.use(express.json()) // ALLOW REQUEST BODY PARSER
+
+// Agr apko Apni  Api's kisi dusri file ya folder mie bnaani hon tou
+app.use(router);
 
 const mongoDbUri = "";
 
